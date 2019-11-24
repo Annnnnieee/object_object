@@ -83,24 +83,9 @@ var repo = {
 
 drawGraph(repo.timeline[0]);
 
-function dragstarted(d) {
-    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-}
-
-function dragged(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-}
-
-function dragended(d) {
-    if (!d3.event.active) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-}
-
 function drawGraph(graph) {
+
+    // draw links
     var link = svg.append("g")
         .attr("class", "links")
         .selectAll("line")
@@ -108,6 +93,7 @@ function drawGraph(graph) {
         .enter()
         .append("line");
 
+    // draw nodes
     var node = svg.append("g")
         .attr("class", "nodes")
         .selectAll("circle")
@@ -150,7 +136,7 @@ function drawGraph(graph) {
 
     // legend
     var legendblock = svg.append("g")
-    .attr("class", "legend");
+        .attr("class", "legend");
 
     var legend = legendblock.append("g")
         .append("svg:linearGradient")
@@ -167,7 +153,7 @@ function drawGraph(graph) {
 
     legend.append("stop")
         .attr("offset", "100%")
-        .attr("stop-color",d3.interpolateBlues(1))
+        .attr("stop-color", d3.interpolateBlues(1))
 
     legendblock.append("rect")
         .attr("width", w - 100)
@@ -191,7 +177,7 @@ function drawGraph(graph) {
         .style("text-anchor", "end")
         .text("cohesion");
 
-    // update elements on mouse activity 
+    // update elements on mouse drag
     function update() {
         link
             .attr("x1", function (d) { return d.source.x; })
@@ -209,4 +195,21 @@ function drawGraph(graph) {
 
     }
 
+    // utitlity functions for mouse drag
+    function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    }
+
+    function dragended(d) {
+        if (!d3.event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
 }
