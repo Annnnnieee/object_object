@@ -138,6 +138,10 @@ function drawGraph(graph) {
 
     simulation.force("link")
         .links(graph.links)
+        .distance(function (l) {
+            return 150;
+        });
+
 
 
     function ticked() {
