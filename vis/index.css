@@ -1,10 +1,11 @@
 .links line {
     stroke: #aaa;
-    stroke-width: 10px;
+    stroke-width: 7px;
 }
 
 .nodes circle {
     pointer-events: all;
-    stroke: none;
-    stroke-width: 40px;
+    stroke: #aaa;
+    stroke-width: 2px;
 }
+
