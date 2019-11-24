@@ -92,26 +92,52 @@ var timeline = d3.scalePoint()
     .range([height-2*margin.bottom, 2*margin.top]);
 
 // axis
-svg
+var slider = svg
     .append("g")
     .attr("class", "timeline")
     .attr("transform", "translate(50,0)")
     .call(d3.axisRight(timeline));
 
+// actual slider
+slider.append("line")
+    .attr("y1", timeline.range()[1])
+    .attr("y2", timeline.range()[0])
+    .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .call(d3.drag()
+        .on("start.interrupt", function() { slider.interrupt(); })
+        .on("start drag", function(d,i) {
+            // TRYING TO FIGURE OUT WHICH POSITION ON THE TIMELINE THE USER DRAGGED TO
+            var yPos = d3.event.y;
+            console.log("Dragged at " + yPos);
+            //console.log(imageScale.invert(xPos));
+            var leftEdges = timeline.range();
+            var width = timeline.rangeBand();
+            var j;
+            for(j=0; yPos > (leftEdges[j] + width); j++) {}
+            console.log("Stopped at " + timeline.domain()[j]);
+            moveHandleDrawGraph(timeline.domain()[j])
+        })
+    );
 
-svg
-    .append("circle")
+// handle
+var handle = slider
+    .insert("circle")
     .attr("class", "handle")
-    .attr("cy", 2*margin.top)
-    .attr("cx", 50)
+    // .attr("cy", timeline(commits.reverse()[0]))
+    // .attr("cx", 0)
     .attr("r", 6);
 
+function moveHandleDrawGraph(commitNum) {
+    handle.attr("cy", timeline(commits.reverse()[commitNum]));
+    drawGraph(repo.timeline[commitNum]);
+}
 
 // ==========================================
 // call this draw graph method with an object from the timeline containing the links and nodes
 //==========================================
 
-drawGraph(repo.timeline[0]);
+// drawGraph(repo.timeline[0]);
 // ===========================================
 
 function dragstarted(d) {
