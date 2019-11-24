@@ -152,11 +152,11 @@ function drawGraph(graph) {
 
     legend.append("stop")
         .attr("offset", "0%")
-        .attr("stop-color", d3.interpolateBlues(0))
+        .attr("stop-color", d3.interpolateBlues(1))
 
     legend.append("stop")
         .attr("offset", "100%")
-        .attr("stop-color", d3.interpolateBlues(1))
+        .attr("stop-color", d3.interpolateBlues(0))
 
     legendblock.append("rect")
         .attr("width", w - 100)
