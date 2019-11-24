@@ -10,7 +10,6 @@ var simulation = d3.forceSimulation()
     .force("center", d3.forceCenter(width / 2, height / 2));
 
 
-
 /*
 change this to load data from a file
 d3.json("miserables.json", function(error, graph) {
@@ -106,11 +105,7 @@ function dragended(d) {
     d.fy = null;
 }
 
-
-
 function drawGraph(graph) {
-
-
     var link = svg.append("g")
         .attr("class", "links")
         .selectAll("line")
@@ -123,7 +118,7 @@ function drawGraph(graph) {
         .selectAll("circle")
         .data(graph.nodes)
         .enter().append("circle")
-        .attr("r", 20) // could represent size based on the node.
+        .attr("r", 50) // could represent size based on the node.
         .style("fill", function (n) {
             return d3.interpolateBlues(n.cohesion);
         })
@@ -132,34 +127,58 @@ function drawGraph(graph) {
             .on("drag", dragged)
             .on("end", dragended));
 
+    simulation
+        .nodes(graph.nodes)
+        .on("tick", ticked);
 
+    simulation.force("link")
+        .links(graph.links)
+        .distance(function (l) {
+            return 250;
+        })
 
-simulation
-    .nodes(graph.nodes)
-    .on("tick", ticked);
+    var text = svg.selectAll("text")
+        .data(graph.nodes)
+        .enter()
+        .append("text");
 
-simulation.force("link")
-    .links(graph.links)
-    .distance(function (l) {
-        return 150;
-    });
+    var labels = node.append("text")
+        .text(function (d) {
+            return d.id;
+        })
+        .attr('x', function (d) {
+            console.log(JSON.stringify(d))
+            return d.x
+        })
+        .attr('y', function (d) { return d.y });
 
+    var textLabels = text
+        .attr("x", function (d) { return d.x; })
+        .attr("y", function (d) { return d.y; })
+        .text(function (d) { return d.id })
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "20px")
+        .attr("fill", "black")
+        .attr("text-anchor", "middle");
 
+    // node.append("title")
+    //     .text(function (d) { return d.id; });
 
-// add hoverover info
-node.append("title")
-    .text(function (d) { return d.id; });
+    function ticked() {
+        link
+            .attr("x1", function (d) { return d.source.x; })
+            .attr("y1", function (d) { return d.source.y; })
+            .attr("x2", function (d) { return d.target.x; })
+            .attr("y2", function (d) { return d.target.y; });
 
-function ticked() {
-    link
-        .attr("x1", function (d) { return d.source.x; })
-        .attr("y1", function (d) { return d.source.y; })
-        .attr("x2", function (d) { return d.target.x; })
-        .attr("y2", function (d) { return d.target.y; });
+        node
+            .attr("cx", function (d) { return d.x; })
+            .attr("cy", function (d) { return d.y; });
 
-    node
-        .attr("cx", function (d) { return d.x; })
-        .attr("cy", function (d) { return d.y; });
-}
+        textLabels
+            .attr("x", function (d) { return d.x; })
+            .attr("y", function (d) { return d.y; })
+
+    }
 
 }
