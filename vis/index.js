@@ -124,7 +124,7 @@ function drawGraph(graph) {
 
     simulation
         .nodes(graph.nodes)
-        .on("tick", ticked);
+        .on("tick", update);
 
     simulation.force("link")
         .links(graph.links)
@@ -146,32 +146,53 @@ function drawGraph(graph) {
         .attr("fill", "black")
         .attr("text-anchor", "middle");
 
-    // // legend
-    // var legend = svg.selectAll(".legend")
-    //     .data(z.ticks(6).slice(1).reverse())
-    //     .enter().append("g")
-    //     .attr("class", "legend")
-    //     .attr("transform", function (d, i) { return "translate(" + (width + 20) + "," + (20 + i * 20) + ")"; });
+    var w = 140, h = 400;
 
-    // legend.append("rect")
-    //     .attr("width", 20)
-    //     .attr("height", 20)
-    //     .style("fill", z);
+    // legend
+    var legendblock = svg.append("g")
+    .attr("class", "legend");
 
-    // legend.append("text")
-    //     .attr("x", 26)
-    //     .attr("y", 10)
-    //     .attr("dy", ".35em")
-    //     .text(String);
+    var legend = legendblock.append("g")
+        .append("svg:linearGradient")
+        .attr("id", "gradient")
+        .attr("x1", "100%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "100%")
+        .attr("spreadMethod", "pad");
 
-    // svg.append("text")
-    //     .attr("class", "label")
-    //     .attr("x", width + 20)
-    //     .attr("y", 10)
-    //     .attr("dy", ".35em")
-    //     .text("Count");
+    legend.append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", d3.interpolateBlues(0))
 
-    function ticked() {
+    legend.append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color",d3.interpolateBlues(1))
+
+    legendblock.append("rect")
+        .attr("width", w - 100)
+        .attr("height", h - 100)
+        .style("fill", "url(#gradient)")
+        .attr("transform", "translate(0,10)");
+
+    var y = d3.scaleLinear()
+        .range([300, 0])
+        .domain([0, 1]);
+
+    var yAxis = d3.axisRight(y);
+
+    legendblock.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(41,10)")
+        .call(yAxis).append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 30)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("cohesion");
+
+    // update elements on mouse activity 
+    function update() {
         link
             .attr("x1", function (d) { return d.source.x; })
             .attr("y1", function (d) { return d.source.y; })

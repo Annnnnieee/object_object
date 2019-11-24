@@ -8,3 +8,13 @@
     stroke: #aaa;
     stroke-width: 2px;
 }
+
+.axis text {
+    font: 10px sans-serif;
+}
+
+.axis line, .axis path {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
