@@ -85,8 +85,6 @@ var repo = {
 };
 
 var commits = repo.timeline.map(function (coms) {return coms.commit;});
-console.log(commits);
-console.log(commits[0]);
 
 //scale
 var timeline = d3.scalePoint()
@@ -150,7 +148,7 @@ function drawGraph(graph) {
         .selectAll("circle")
         .data(graph.nodes)
         .enter().append("circle")
-        .attr("r", 20) // could represent size based on the node.
+        .attr("r", 10) // could represent size based on the node.
         .style("fill", function (n) {
             return d3.interpolateBlues(n.cohesion);
         })

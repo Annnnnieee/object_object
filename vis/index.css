@@ -4,21 +4,29 @@
 
 .links line {
     stroke: #aaa;
-    stroke-width: 10px;
+    stroke-width: 3px;
 }
 
 .nodes circle {
     pointer-events: all;
     stroke: none;
-    stroke-width: 40px;
+    stroke-width: 20px;
 }
 
-.timeline {
-    stroke: rgb(99, 99, 99);
+.timeline line{
+    stroke: rgba(250, 250, 250, 0.98);
+}
+
+.timeline path{
+    stroke: rgba(250, 250, 250, 0.98);
+}
+
+.timeline text{
+    fill: rgba(250, 250, 250, 0.98);
     font: 12px sans-serif;
     font-weight: lighter;
 }
 
 .handle {
-    fill: rgba(239, 239, 239, 0.93);
+    fill: rgba(239, 239, 239, 0.98);
 }
