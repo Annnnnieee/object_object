@@ -1,5 +1,6 @@
 .links line {
     stroke: #aaa;
+    stroke-width: 10px;
 }
 
 .nodes circle {
