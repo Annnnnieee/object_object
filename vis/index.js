@@ -118,7 +118,10 @@ function drawGraph(graph) {
             return 250;
         })
 
-    var text = svg.selectAll("text")
+
+    var text = svg.append("g")
+        .attr("class", "labels")
+        .selectAll("text")
         .data(graph.nodes)
         .enter()
         .append("text");
