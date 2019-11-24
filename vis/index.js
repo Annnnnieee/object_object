@@ -12,7 +12,7 @@ var simulation = d3.forceSimulation()
 
 /*
 change this to load data from a file
-d3.json("miserables.json", function(error, graph) {
+d3.json("output.json", function(error, graph) {
   if (error) throw error;
   // graph construction goes here
 }
@@ -81,12 +81,7 @@ var repo = {
     ]
 }
 
-// ==========================================
-// call this draw graph method with an object from the timeline containing the links and nodes
-//==========================================
-
 drawGraph(repo.timeline[0]);
-// ===========================================
 
 function dragstarted(d) {
     if (!d3.event.active) simulation.alphaTarget(0.3).restart();
@@ -142,16 +137,6 @@ function drawGraph(graph) {
         .enter()
         .append("text");
 
-    var labels = node.append("text")
-        .text(function (d) {
-            return d.id;
-        })
-        .attr('x', function (d) {
-            console.log(JSON.stringify(d))
-            return d.x
-        })
-        .attr('y', function (d) { return d.y });
-
     var textLabels = text
         .attr("x", function (d) { return d.x; })
         .attr("y", function (d) { return d.y; })
@@ -160,9 +145,6 @@ function drawGraph(graph) {
         .attr("font-size", "20px")
         .attr("fill", "black")
         .attr("text-anchor", "middle");
-
-    // node.append("title")
-    //     .text(function (d) { return d.id; });
 
     function ticked() {
         link
