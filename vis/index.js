@@ -1,3 +1,5 @@
+
+
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
@@ -17,14 +19,11 @@ d3.json("miserables.json", function(error, graph) {
 }
 the graph variable below is just for testing for now
 */
-
-
-
 var repo = {
     timeline: [
-        {   
+        {
             commit: "d9aw2a0",
-            datetime: "2015-03-25T14:48:00", 
+            datetime: "2015-03-25T14:48:00",
             nodes: [
                 { "id": "class b", "cohesion": .50 },
                 { "id": "class a", "cohesion": .01 },
@@ -90,7 +89,6 @@ var repo = {
 drawGraph(repo.timeline[0]);
 // ===========================================
 
-
 function dragstarted(d) {
     if (!d3.event.active) simulation.alphaTarget(0.3).restart();
     d.fx = d.x;
@@ -108,42 +106,47 @@ function dragended(d) {
     d.fy = null;
 }
 
-function drawGraph(graph){
 
-var link = svg.append("g")
-    .attr("class", "links")
-    .selectAll("line")
-    .data(graph.links)
-    .enter().append("line");
 
-var node = svg.append("g")
-    .attr("class", "nodes")
-    .selectAll("circle")
-    .data(graph.nodes)
-    .enter().append("circle")
-    .attr("r", 2.5)
-    .call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended));
+function drawGraph(graph) {
 
-node.append("title")
-    .text(function (d) { return d.id; });
 
-simulation
-    .nodes(graph.nodes)
-    .on("tick", ticked);
+    var link = svg.append("g")
+        .attr("class", "links")
+        .selectAll("line")
+        .data(graph.links)
+        .enter()
+        .append("line");
 
-simulation.force("link")
-    .links(graph.links);
+    var node = svg.append("g")
+        .attr("class", "nodes")
+        .selectAll("circle")
+        .data(graph.nodes)
+        .enter().append("circle")
+        .attr("r", 20) // could represent size based on the node.
+        .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
+
+    node.append("title")
+        .text(function (d) { return d.id; });
+
+    simulation
+        .nodes(graph.nodes)
+        .on("tick", ticked);
+
+    simulation.force("link")
+        .links(graph.links)
+
 
     function ticked() {
-        link    
+        link
             .attr("x1", function (d) { return d.source.x; })
             .attr("y1", function (d) { return d.source.y; })
             .attr("x2", function (d) { return d.target.x; })
             .attr("y2", function (d) { return d.target.y; });
-    
+
         node
             .attr("cx", function (d) { return d.x; })
             .attr("cy", function (d) { return d.y; });
