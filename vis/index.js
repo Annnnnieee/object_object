@@ -124,6 +124,9 @@ function drawGraph(graph) {
         .data(graph.nodes)
         .enter().append("circle")
         .attr("r", 20) // could represent size based on the node.
+        .style("fill", function (n) {
+            return d3.interpolateBlues(n.cohesion);
+        })
         .call(d3.drag()
             .on("start", dragstarted)
             .on("drag", dragged)
