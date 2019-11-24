@@ -1,6 +1,8 @@
 var svg = d3.select("svg"),
+    margin = {left: 30, right: 30, top: 30, bottom: 30 },
     width = +svg.attr("width"),
     height = +svg.attr("height");
+svg.attr("class", "graph-svg-component");
 
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function (d) { return d.id; }))
@@ -81,7 +83,32 @@ var repo = {
         }
 
     ]
-}
+};
+
+var commits = repo.timeline.map(function (coms) {return coms.commit;});
+console.log(commits);
+console.log(commits[0]);
+
+//scale
+var timeline = d3.scalePoint()
+    .domain(commits.reverse())
+    .range([height-2*margin.bottom, 2*margin.top]);
+
+// axis
+svg
+    .append("g")
+    .attr("class", "timeline")
+    .attr("transform", "translate(50,0)")
+    .call(d3.axisRight(timeline));
+
+
+svg
+    .append("circle")
+    .attr("class", "handle")
+    .attr("cy", 2*margin.top)
+    .attr("cx", 50)
+    .attr("r", 6);
+
 
 // ==========================================
 // call this draw graph method with an object from the timeline containing the links and nodes

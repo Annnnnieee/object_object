@@ -1,3 +1,7 @@
+.graph-svg-component {
+    background-color: rgba(211, 108, 64, 0.6);
+}
+
 .links line {
     stroke: #aaa;
 }
@@ -6,4 +10,14 @@
     pointer-events: all;
     stroke: none;
     stroke-width: 40px;
+}
+
+.timeline {
+    stroke: rgb(99, 99, 99);
+    font: 12px sans-serif;
+    font-weight: lighter;
+}
+
+.handle {
+    fill: rgba(239, 239, 239, 0.93);
 }
