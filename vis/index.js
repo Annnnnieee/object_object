@@ -24,7 +24,7 @@ var repo = {
             commit: "d9aw2a0",
             datetime: "2015-03-25T14:48:00",
             nodes: [
-                { "id": "class b", "cohesion": .50 },
+                { "id": "class b", "cohesion": .7 },
                 { "id": "class a", "cohesion": .01 },
                 { "id": "class c", "cohesion": .44 }
             ],
@@ -145,6 +145,31 @@ function drawGraph(graph) {
         .attr("font-size", "20px")
         .attr("fill", "black")
         .attr("text-anchor", "middle");
+
+    // // legend
+    // var legend = svg.selectAll(".legend")
+    //     .data(z.ticks(6).slice(1).reverse())
+    //     .enter().append("g")
+    //     .attr("class", "legend")
+    //     .attr("transform", function (d, i) { return "translate(" + (width + 20) + "," + (20 + i * 20) + ")"; });
+
+    // legend.append("rect")
+    //     .attr("width", 20)
+    //     .attr("height", 20)
+    //     .style("fill", z);
+
+    // legend.append("text")
+    //     .attr("x", 26)
+    //     .attr("y", 10)
+    //     .attr("dy", ".35em")
+    //     .text(String);
+
+    // svg.append("text")
+    //     .attr("class", "label")
+    //     .attr("x", width + 20)
+    //     .attr("y", 10)
+    //     .attr("dy", ".35em")
+    //     .text("Count");
 
     function ticked() {
         link
