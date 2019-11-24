@@ -84,7 +84,7 @@ var repo = {
 }
 
 // ==========================================
-// 
+// call this draw graph method with an object from the timeline containing the links and nodes
 //==========================================
 
 drawGraph(repo.timeline[0]);
