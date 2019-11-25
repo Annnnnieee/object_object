@@ -6,7 +6,7 @@ var svg = d3.select("svg"),
 
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function (d) { return d.id; }))
-    .force("charge", d3.forceManyBody())
+    .force("charge", d3.forceManyBody().strength(-100))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
 
@@ -81,6 +81,14 @@ var repo = {
     ]
 }
 
+svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 50)
+        .attr("text-anchor", "middle")  
+
+        .style("font", "50px sans-serif")
+        .text("Cohesion");
+
 drawGraph(repo.timeline[0]);
 
 function drawGraph(graph) {
@@ -118,7 +126,6 @@ function drawGraph(graph) {
             return 250;
         })
 
-
     var text = svg.append("g")
         .attr("class", "labels")
         .selectAll("text")
@@ -138,7 +145,7 @@ function drawGraph(graph) {
     // legend
     var legendblock = svg.append("g")
         .attr("class", "legend")
-        .attr("transform", "translate(860, 0)");
+        .attr("transform", "translate(860, 60)");
 
     var legend = legendblock.append("g")
         .append("svg:linearGradient")
