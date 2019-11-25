@@ -1,8 +1,10 @@
 
 
 var svg = d3.select("svg"),
+    margin = {left: 30, right: 30, top: 30, bottom: 30 },
     width = +svg.attr("width"),
     height = +svg.attr("height");
+svg.attr("class", "graph-svg-component");
 
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function (d) { return d.id; }))
@@ -79,19 +81,81 @@ var repo = {
         }
 
     ]
+};
+
+var commits = repo.timeline.map(function (coms) {return coms.commit;}).reverse();
+var maxIdx = commits.length-1;
+
+// draw the first commit graph when the page loads
+drawGraph(repo.timeline[0]);
+
+// timeline
+var slider = d3
+    .sliderRight()
+    .min(0)
+    .max(maxIdx)
+    .step(1)
+    .width(0)
+    .height(height*0.7)
+    .tickFormat(function(d,i){return commits[i]})
+    .ticks(commits.length)
+    .default(maxIdx)
+    .handle(
+        d3.symbol()
+            .type(d3.symbolCircle)
+            .size(100)
+    )
+    .fill("#ffffff")
+    .on('onchange', val => {
+        drawGraph(repo.timeline[maxIdx - val])
+    });
+
+svg
+    .append("g")
+    .attr("class", "timeline")
+    .attr("transform", "translate("+ margin.left + ","+ 3*margin.top + ")")
+    .call(slider);
+
+// ==========================================
+// call this draw graph method with an object from the timeline containing the links and nodes
+//==========================================
+
+// drawGraph(repo.timeline[0]);
+// ===========================================
+
+function dragstarted(d) {
+    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+}
+
+function dragged(d) {
+    d.fx = d3.event.x;
+    d.fy = d3.event.y;
+}
+
+function dragended(d) {
+    if (!d3.event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
 }
 
 svg.append("text")
         .attr("x", (width / 2))             
         .attr("y", 50)
-        .attr("text-anchor", "middle")  
-
-        .style("font", "50px sans-serif")
+        .attr("text-anchor", "middle")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "50px")
+        .attr("stroke", "white")
+        .attr("fill", "white")
         .text("Cohesion");
 
 drawGraph(repo.timeline[0]);
 
 function drawGraph(graph) {
+    svg.selectAll(".links").remove();
+    svg.selectAll(".nodes").remove();
+    svg.selectAll(".labels").remove();
 
     // draw links
     var link = svg.append("g")
@@ -107,7 +171,7 @@ function drawGraph(graph) {
         .selectAll("circle")
         .data(graph.nodes)
         .enter().append("circle")
-        .attr("r", 50) // could represent size based on the node.
+        .attr("r", 10) // could represent size based on the node.
         .style("fill", function (n) {
             return d3.interpolateBlues(n.cohesion);
         })
@@ -124,7 +188,7 @@ function drawGraph(graph) {
         .links(graph.links)
         .distance(function (l) {
             return 250;
-        })
+        });
 
     var text = svg.append("g")
         .attr("class", "labels")
@@ -135,11 +199,11 @@ function drawGraph(graph) {
 
     var textLabels = text
         .attr("x", function (d) { return d.x; })
-        .attr("y", function (d) { return d.y; })
+        .attr("y", function (d) { return d.y-10; })
         .text(function (d) { return d.id })
         .attr("font-family", "sans-serif")
-        .attr("font-size", "20px")
-        .attr("fill", "black")
+        .attr("font-size", "15px")
+        .attr("fill", "whitesmoke")
         .attr("text-anchor", "middle");
 
     // legend
@@ -158,14 +222,14 @@ function drawGraph(graph) {
 
     legend.append("stop")
         .attr("offset", "0%")
-        .attr("stop-color", d3.interpolateBlues(1))
+        .attr("stop-color", d3.interpolateBlues(1));
 
     legend.append("stop")
         .attr("offset", "100%")
-        .attr("stop-color", d3.interpolateBlues(0))
+        .attr("stop-color", d3.interpolateBlues(0));
 
     legendblock.append("rect")
-        .attr("width", 40)
+        .attr("width", 30)
         .attr("height", 300)
         .style("fill", "url(#gradient)")
         .attr("transform", "translate(0,10)");
@@ -184,7 +248,7 @@ function drawGraph(graph) {
         .attr("y", 30)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
-        .text("cohesion");
+        .text("c o h e s i o n");
 
     // update elements on mouse drag
     function update() {

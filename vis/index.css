@@ -1,6 +1,10 @@
+.graph-svg-component {
+    background-color: rgba(211, 108, 64, 0.6);
+}
+
 .links line {
     stroke: #aaa;
-    stroke-width: 7px;
+    stroke-width: 3px;
 }
 
 .nodes circle {
@@ -10,11 +14,41 @@
 }
 
 .axis text {
-    font: 10px sans-serif;
+    font: 11px sans-serif;
+    fill: rgba(239, 239, 239, 0.98);
+    stroke: rgba(239, 239, 239, 0.98);
+    font-weight: lighter;
 }
 
 .axis line, .axis path {
     fill: none;
-    stroke: #000;
+    stroke: rgba(250, 250, 250, 0.98);
     shape-rendering: crispEdges;
+}
+
+.timeline line{
+    stroke: rgba(250, 250, 250, 0.98);
+}
+
+.timeline path{
+    stroke: rgba(250, 250, 250, 0.98);
+}
+
+.timeline text{
+    fill: rgba(250, 250, 250, 0.98);
+    font: 13px sans-serif;
+    font-weight: lighter;
+    shape-rendering: crispEdges;
+    opacity: 0.98;
+}
+
+.track-overlay {
+    pointer-events: stroke;
+    stroke-width: 5px;
+    stroke: transparent;
+    height: inherit;
+}
+
+.handle {
+    fill: rgba(239, 239, 239, 0.98);
 }
