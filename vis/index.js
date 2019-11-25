@@ -24,7 +24,7 @@ var repo = {
             commit: "d9aw2a0",
             datetime: "2015-03-25T14:48:00",
             nodes: [
-                { "id": "class b", "cohesion": .7 },
+                { "id": "class b", "cohesion": 1 },
                 { "id": "class a", "cohesion": .01 },
                 { "id": "class c", "cohesion": .44 }
             ],
@@ -135,11 +135,10 @@ function drawGraph(graph) {
         .attr("fill", "black")
         .attr("text-anchor", "middle");
 
-    var w = 140, h = 400;
-
     // legend
     var legendblock = svg.append("g")
-        .attr("class", "legend");
+        .attr("class", "legend")
+        .attr("transform", "translate(860, 0)");
 
     var legend = legendblock.append("g")
         .append("svg:linearGradient")
@@ -159,8 +158,8 @@ function drawGraph(graph) {
         .attr("stop-color", d3.interpolateBlues(0))
 
     legendblock.append("rect")
-        .attr("width", w - 100)
-        .attr("height", h - 100)
+        .attr("width", 40)
+        .attr("height", 300)
         .style("fill", "url(#gradient)")
         .attr("transform", "translate(0,10)");
 
