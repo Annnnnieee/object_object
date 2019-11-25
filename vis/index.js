@@ -1,7 +1,7 @@
 
 
 var svg = d3.select("svg"),
-    margin = {left: 30, right: 30, top: 30, bottom: 30 },
+    margin = { left: 30, right: 30, top: 30, bottom: 30 },
     width = +svg.attr("width"),
     height = +svg.attr("height");
 svg.attr("class", "graph-svg-component");
@@ -11,7 +11,8 @@ var simulation = d3.forceSimulation()
     .force("charge", d3.forceManyBody().strength(-100))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
-
+var graph = svg.append("g")
+    .attr("class", "graph");
 /*
 change this to load data from a file
 d3.json("output.json", function(error, graph) {
@@ -83,11 +84,12 @@ var repo = {
     ]
 };
 
-var commits = repo.timeline.map(function (coms) {return coms.commit;}).reverse();
-var maxIdx = commits.length-1;
+var commits = repo.timeline.map(function (coms) { return coms.commit; }).reverse();
+var maxIdx = commits.length - 1;
 
 // draw the first commit graph when the page loads
 drawGraph(repo.timeline[0]);
+drawLegend();
 
 // timeline
 var slider = d3
@@ -96,8 +98,8 @@ var slider = d3
     .max(maxIdx)
     .step(1)
     .width(0)
-    .height(height*0.7)
-    .tickFormat(function(d,i){return commits[i]})
+    .height(height * 0.7)
+    .tickFormat(function (d, i) { return commits[i] })
     .ticks(commits.length)
     .default(maxIdx)
     .handle(
@@ -113,45 +115,25 @@ var slider = d3
 svg
     .append("g")
     .attr("class", "timeline")
-    .attr("transform", "translate("+ margin.left + ","+ 3*margin.top + ")")
+    .attr("transform", "translate(" + margin.left + "," + 3 * margin.top + ")")
     .call(slider);
 
-// ==========================================
-// call this draw graph method with an object from the timeline containing the links and nodes
-//==========================================
-
-// drawGraph(repo.timeline[0]);
-// ===========================================
-
-function dragstarted(d) {
-    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-}
-
-function dragged(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-}
-
-function dragended(d) {
-    if (!d3.event.active) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-}
-
 svg.append("text")
-        .attr("x", (width / 2))             
-        .attr("y", 50)
-        .attr("text-anchor", "middle")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "50px")
-        .attr("stroke", "white")
-        .attr("fill", "white")
-        .text("Cohesion");
+    .attr("x", (width / 2))
+    .attr("y", 50)
+    .attr("text-anchor", "middle")
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "50px")
+    .attr("stroke", "white")
+    .attr("fill", "white")
+    .text("Cohesion");
 
-drawGraph(repo.timeline[0]);
 
+simulation.tick()
+
+
+
+// draw graph
 function drawGraph(graph) {
     svg.selectAll(".links").remove();
     svg.selectAll(".nodes").remove();
@@ -171,7 +153,7 @@ function drawGraph(graph) {
         .selectAll("circle")
         .data(graph.nodes)
         .enter().append("circle")
-        .attr("r", 10) // could represent size based on the node.
+        .attr("r", 10)
         .style("fill", function (n) {
             return d3.interpolateBlues(n.cohesion);
         })
@@ -183,6 +165,9 @@ function drawGraph(graph) {
     simulation
         .nodes(graph.nodes)
         .on("tick", update);
+
+    simulation.alphaTarget(0.3).restart();
+
 
     simulation.force("link")
         .links(graph.links)
@@ -199,12 +184,51 @@ function drawGraph(graph) {
 
     var textLabels = text
         .attr("x", function (d) { return d.x; })
-        .attr("y", function (d) { return d.y-10; })
+        .attr("y", function (d) { return d.y - 10; })
         .text(function (d) { return d.id })
         .attr("font-family", "sans-serif")
         .attr("font-size", "15px")
         .attr("fill", "whitesmoke")
         .attr("text-anchor", "middle");
+
+    // update elements on mouse drag
+    function update() {
+        link
+            .attr("x1", function (d) { return d.source.x; })
+            .attr("y1", function (d) { return d.source.y; })
+            .attr("x2", function (d) { return d.target.x; })
+            .attr("y2", function (d) { return d.target.y; });
+
+        node
+            .attr("cx", function (d) { return d.x; })
+            .attr("cy", function (d) { return d.y; });
+
+        textLabels
+            .attr("x", function (d) { return d.x; })
+            .attr("y", function (d) { return d.y; })
+
+    }
+
+    // utitlity functions for mouse drag
+    function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    }
+
+    function dragended(d) {
+        if (!d3.event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
+}
+
+function drawLegend() {
 
     // legend
     var legendblock = svg.append("g")
@@ -249,40 +273,4 @@ function drawGraph(graph) {
         .attr("dy", ".71em")
         .style("text-anchor", "end")
         .text("c o h e s i o n");
-
-    // update elements on mouse drag
-    function update() {
-        link
-            .attr("x1", function (d) { return d.source.x; })
-            .attr("y1", function (d) { return d.source.y; })
-            .attr("x2", function (d) { return d.target.x; })
-            .attr("y2", function (d) { return d.target.y; });
-
-        node
-            .attr("cx", function (d) { return d.x; })
-            .attr("cy", function (d) { return d.y; });
-
-        textLabels
-            .attr("x", function (d) { return d.x; })
-            .attr("y", function (d) { return d.y; })
-
-    }
-
-    // utitlity functions for mouse drag
-    function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
-    }
-
-    function dragged(d) {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
-    }
-
-    function dragended(d) {
-        if (!d3.event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
-    }
 }
