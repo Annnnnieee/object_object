@@ -13,7 +13,6 @@ def output(depdict):
             if (to_):
                 deps.append({"source":from_,"target":to_})
     
-    print json.dumps(deps)
     with open('dependency_data.json', 'w') as f:
         json.dump(deps, f)
 
