@@ -8,14 +8,13 @@ svg.attr("class", "graph-svg-component");
 
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function (d) { return d.id; }))
-    .force("charge", d3.forceManyBody())
+    .force("charge", d3.forceManyBody().strength(-100))
     .force("center", d3.forceCenter(width / 2, height / 2));
-
 
 
 /*
 change this to load data from a file
-d3.json("miserables.json", function(error, graph) {
+d3.json("output.json", function(error, graph) {
   if (error) throw error;
   // graph construction goes here
 }
@@ -27,7 +26,7 @@ var repo = {
             commit: "d9aw2a0",
             datetime: "2015-03-25T14:48:00",
             nodes: [
-                { "id": "class b", "cohesion": .50 },
+                { "id": "class b", "cohesion": 1 },
                 { "id": "class a", "cohesion": .01 },
                 { "id": "class c", "cohesion": .44 }
             ],
@@ -87,7 +86,10 @@ var repo = {
 var commits = repo.timeline.map(function (coms) {return coms.commit;}).reverse();
 var maxIdx = commits.length-1;
 
+// draw the first commit graph when the page loads
 drawGraph(repo.timeline[0]);
+
+// timeline
 var slider = d3
     .sliderRight()
     .min(0)
@@ -138,12 +140,24 @@ function dragended(d) {
     d.fy = null;
 }
 
+svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 50)
+        .attr("text-anchor", "middle")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "50px")
+        .attr("stroke", "white")
+        .attr("fill", "white")
+        .text("Cohesion");
 
+drawGraph(repo.timeline[0]);
 
 function drawGraph(graph) {
     svg.selectAll(".links").remove();
     svg.selectAll(".nodes").remove();
+    svg.selectAll(".labels").remove();
 
+    // draw links
     var link = svg.append("g")
         .attr("class", "links")
         .selectAll("line")
@@ -151,6 +165,7 @@ function drawGraph(graph) {
         .enter()
         .append("line");
 
+    // draw nodes
     var node = svg.append("g")
         .attr("class", "nodes")
         .selectAll("circle")
@@ -165,22 +180,78 @@ function drawGraph(graph) {
             .on("drag", dragged)
             .on("end", dragended));
 
-    node.append("title")
-        .text(function (d) { return d.id; });
-
     simulation
         .nodes(graph.nodes)
-        .on("tick", ticked);
+        .on("tick", update);
 
     simulation.force("link")
         .links(graph.links)
         .distance(function (l) {
-            return 150;
+            return 250;
         });
 
+    var text = svg.append("g")
+        .attr("class", "labels")
+        .selectAll("text")
+        .data(graph.nodes)
+        .enter()
+        .append("text");
 
+    var textLabels = text
+        .attr("x", function (d) { return d.x; })
+        .attr("y", function (d) { return d.y-10; })
+        .text(function (d) { return d.id })
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "15px")
+        .attr("fill", "whitesmoke")
+        .attr("text-anchor", "middle");
 
-    function ticked() {
+    // legend
+    var legendblock = svg.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(860, 60)");
+
+    var legend = legendblock.append("g")
+        .append("svg:linearGradient")
+        .attr("id", "gradient")
+        .attr("x1", "100%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "100%")
+        .attr("spreadMethod", "pad");
+
+    legend.append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", d3.interpolateBlues(1));
+
+    legend.append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", d3.interpolateBlues(0));
+
+    legendblock.append("rect")
+        .attr("width", 30)
+        .attr("height", 300)
+        .style("fill", "url(#gradient)")
+        .attr("transform", "translate(0,10)");
+
+    var y = d3.scaleLinear()
+        .range([300, 0])
+        .domain([0, 1]);
+
+    var yAxis = d3.axisRight(y);
+
+    legendblock.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(41,10)")
+        .call(yAxis).append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 30)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("c o h e s i o n");
+
+    // update elements on mouse drag
+    function update() {
         link
             .attr("x1", function (d) { return d.source.x; })
             .attr("y1", function (d) { return d.source.y; })
@@ -190,6 +261,28 @@ function drawGraph(graph) {
         node
             .attr("cx", function (d) { return d.x; })
             .attr("cy", function (d) { return d.y; });
+
+        textLabels
+            .attr("x", function (d) { return d.x; })
+            .attr("y", function (d) { return d.y; })
+
     }
 
+    // utitlity functions for mouse drag
+    function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    }
+
+    function dragended(d) {
+        if (!d3.event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
 }
