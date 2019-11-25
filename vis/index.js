@@ -6,13 +6,26 @@ var svg = d3.select("svg"),
     height = +svg.attr("height");
 svg.attr("class", "graph-svg-component");
 
+
+
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function (d) { return d.id; }))
-    .force("charge", d3.forceManyBody().strength(-100))
+    .force("charge", d3.forceManyBody().strength(-40))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
 var graph = svg.append("g")
     .attr("class", "graph");
+
+svg.append("text")
+    .attr("class", "title")
+    .attr("x", (width / 2))
+    .attr("y", 50)
+    .attr("text-anchor", "middle")
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "50px")
+    .text("Cohesion");
+
+
 /*
 change this to load data from a file
 d3.json("output.json", function(error, graph) {
@@ -51,7 +64,7 @@ var repo = {
         },
         {
             commit: "2r5sg00",
-            datetime: "2015-03-26T9:52:26",
+            datetime: "2015-03-25T15:14:39",
             nodes: [
                 { "id": "class b", "cohesion": .50 },
                 { "id": "class a", "cohesion": .10 },
@@ -84,7 +97,7 @@ var repo = {
     ]
 };
 
-var commits = repo.timeline.map(function (coms) { return coms.commit; }).reverse();
+var commits = repo.timeline.map(function (coms) { return new Date(coms.datetime).toLocaleString('en-GB', { timeZone: 'UTC' }, { dateStyle: "short" }, { timeSytle: "short" }) }).reverse();
 var maxIdx = commits.length - 1;
 
 // draw the first commit graph when the page loads
@@ -107,7 +120,6 @@ var slider = d3
             .type(d3.symbolCircle)
             .size(100)
     )
-    .fill("#ffffff")
     .on('onchange', val => {
         drawGraph(repo.timeline[maxIdx - val])
     });
@@ -117,16 +129,6 @@ svg
     .attr("class", "timeline")
     .attr("transform", "translate(" + margin.left + "," + 3 * margin.top + ")")
     .call(slider);
-
-svg.append("text")
-    .attr("x", (width / 2))
-    .attr("y", 50)
-    .attr("text-anchor", "middle")
-    .attr("font-family", "sans-serif")
-    .attr("font-size", "50px")
-    .attr("stroke", "white")
-    .attr("fill", "white")
-    .text("Cohesion");
 
 
 simulation.tick()
@@ -184,11 +186,10 @@ function drawGraph(graph) {
 
     var textLabels = text
         .attr("x", function (d) { return d.x; })
-        .attr("y", function (d) { return d.y - 10; })
+        .attr("y", function (d) { return d.y; })
         .text(function (d) { return d.id })
         .attr("font-family", "sans-serif")
         .attr("font-size", "15px")
-        .attr("fill", "whitesmoke")
         .attr("text-anchor", "middle");
 
     // update elements on mouse drag
@@ -205,7 +206,7 @@ function drawGraph(graph) {
 
         textLabels
             .attr("x", function (d) { return d.x; })
-            .attr("y", function (d) { return d.y; })
+            .attr("y", function (d) { return d.y - 15; })
 
     }
 
@@ -265,9 +266,10 @@ function drawLegend() {
     var yAxis = d3.axisRight(y);
 
     legendblock.append("g")
-        .attr("class", "y axis")
+        .attr("class", "legend-label")
         .attr("transform", "translate(41,10)")
         .call(yAxis).append("text")
+        .attr("color", "black")
         .attr("transform", "rotate(-90)")
         .attr("y", 30)
         .attr("dy", ".71em")
