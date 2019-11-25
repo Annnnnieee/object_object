@@ -84,102 +84,35 @@ var repo = {
     ]
 };
 
-var commits = repo.timeline.map(function (coms) {return coms.commit;});
-console.log(commits.length);
+var commits = repo.timeline.map(function (coms) {return coms.commit;}).reverse();
+var maxIdx = commits.length-1;
 
-var sliderSimple = d3
+drawGraph(repo.timeline[0]);
+var slider = d3
     .sliderRight()
     .min(0)
-    .max(commits.length-1)
+    .max(maxIdx)
     .step(1)
-    .width(parseInt(d3.select('body').style("width"))-80)
+    .width(0)
+    .height(height*0.7)
     .tickFormat(function(d,i){return commits[i]})
     .ticks(commits.length)
-    .default(0)
+    .default(maxIdx)
     .handle(
         d3.symbol()
             .type(d3.symbolCircle)
-            .size(50)
+            .size(100)
     )
     .fill("#ffffff")
     .on('onchange', val => {
-        console.log("VAL: " + val);
-        drawGraph(repo.timeline[val])
+        drawGraph(repo.timeline[maxIdx - val])
     });
 
-var gSimple = d3
-    .select('div#slider-simple')
-    .append('svg')
-    .attr('width', 50)
-    .attr('height', 100)
-    .append('g')
-    .attr('transform', 'translate(50,0)');
-
-gSimple.call(sliderSimple);
-
-// //scale
-// var timeline = d3.scalePoint()
-//     .domain(commits.reverse())
-//     .range([height-2*margin.bottom, 2*margin.top]);
-//
-// // axis
-// var slider = svg
-//     .append("g")
-//     .attr("class", "timeline")
-//     .attr("transform", "translate(50,0)")
-//     .call(d3.axisRight(timeline));
-//
-// // actual slider
-// slider.append("line")
-//     .attr("y1", timeline.range()[0])
-//     .attr("y2", timeline.range()[1])
-//     .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-//         .attr("class", "track-overlay")
-//     .call(d3.drag()
-//         .on("start.interrupt", function() { slider.interrupt(); })
-//         .on("start drag", function(d,i) {
-//             // TRYING TO FIGURE OUT WHICH POSITION ON THE TIMELINE THE USER DRAGGED TO
-//             var yPos = d3.event.y;
-//             console.log("Dragged at " + yPos);
-//             //console.log(imageScale.invert(xPos));
-//             console.log("range 0:" + timeline.range()[0]);
-//             console.log("range 1:" + timeline.range()[1]);
-//             var length = timeline.range()[0]-timeline.range()[1];
-//             var tickSize = length/(commits.length-1);
-//             console.log("length: " + length);
-//             console.log("tick size: " + tickSize);
-//
-//             var tick;
-//             for(tick = 0; yPos > timeline.range[1]+(tick*tickSize); tick++) {
-//                 console.log(timeline.range[1]+tick*tickSize);
-//             }
-//
-//             console.log("tick="+tick);
-//             console.log("Stopped at " + timeline.domain().reverse()[tick]);
-//
-//
-//             var inverseScale = d3.scalePoint()
-//                 .domain(timeline.range)
-//                 .range(timeline.domain);
-//
-//             console.log("INVERSE SCALE: " + inverseScale(d3.event.y));
-//
-//             moveHandleDrawGraph(tick)
-//         })
-//     );
-//
-// // handle
-// var handle = slider
-//     .insert("circle", ".track-overlay")
-//     .attr("class", "handle")
-//     // .attr("cy", timeline(commits.reverse()[0]))
-//     // .attr("cx", 0)
-//     .attr("r", 6);
-//
-// function moveHandleDrawGraph(commitNum) {
-//     handle.attr("cy", timeline(commits.reverse()[commitNum]));
-//     drawGraph(repo.timeline[commitNum]);
-// }
+svg
+    .append("g")
+    .attr("class", "timeline")
+    .attr("transform", "translate("+ margin.left + ","+ 3*margin.top + ")")
+    .call(slider);
 
 // ==========================================
 // call this draw graph method with an object from the timeline containing the links and nodes
@@ -208,7 +141,8 @@ function dragended(d) {
 
 
 function drawGraph(graph) {
-
+    svg.selectAll(".links").remove();
+    svg.selectAll(".nodes").remove();
 
     var link = svg.append("g")
         .attr("class", "links")

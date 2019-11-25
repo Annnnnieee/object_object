@@ -25,22 +25,16 @@
     fill: rgba(250, 250, 250, 0.98);
     font: 12px sans-serif;
     font-weight: lighter;
+    opacity: 0.98;
 }
 
 .track-overlay {
     pointer-events: stroke;
-    stroke-width: 10px;
+    stroke-width: 5px;
     stroke: transparent;
+    height: inherit;
 }
 
 .handle {
     fill: rgba(239, 239, 239, 0.98);
-}
-
-.slider text{
-    font-size: 18px;
-}
-
-#slider-simple text{
-    font-size: 18px;
 }
