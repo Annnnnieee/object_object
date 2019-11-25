@@ -85,53 +85,101 @@ var repo = {
 };
 
 var commits = repo.timeline.map(function (coms) {return coms.commit;});
+console.log(commits.length);
 
-//scale
-var timeline = d3.scalePoint()
-    .domain(commits.reverse())
-    .range([height-2*margin.bottom, 2*margin.top]);
+var sliderSimple = d3
+    .sliderRight()
+    .min(0)
+    .max(commits.length-1)
+    .step(1)
+    .width(parseInt(d3.select('body').style("width"))-80)
+    .tickFormat(function(d,i){return commits[i]})
+    .ticks(commits.length)
+    .default(0)
+    .handle(
+        d3.symbol()
+            .type(d3.symbolCircle)
+            .size(50)
+    )
+    .fill("#ffffff")
+    .on('onchange', val => {
+        console.log("VAL: " + val);
+        drawGraph(repo.timeline[val])
+    });
 
-// axis
-var slider = svg
-    .append("g")
-    .attr("class", "timeline")
-    .attr("transform", "translate(50,0)")
-    .call(d3.axisRight(timeline));
+var gSimple = d3
+    .select('div#slider-simple')
+    .append('svg')
+    .attr('width', 50)
+    .attr('height', 100)
+    .append('g')
+    .attr('transform', 'translate(50,0)');
 
-// actual slider
-slider.append("line")
-    .attr("y1", timeline.range()[1])
-    .attr("y2", timeline.range()[0])
-    .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-    .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-    .call(d3.drag()
-        .on("start.interrupt", function() { slider.interrupt(); })
-        .on("start drag", function(d,i) {
-            // TRYING TO FIGURE OUT WHICH POSITION ON THE TIMELINE THE USER DRAGGED TO
-            var yPos = d3.event.y;
-            console.log("Dragged at " + yPos);
-            //console.log(imageScale.invert(xPos));
-            var leftEdges = timeline.range();
-            var width = timeline.rangeBand();
-            var j;
-            for(j=0; yPos > (leftEdges[j] + width); j++) {}
-            console.log("Stopped at " + timeline.domain()[j]);
-            moveHandleDrawGraph(timeline.domain()[j])
-        })
-    );
+gSimple.call(sliderSimple);
 
-// handle
-var handle = slider
-    .insert("circle")
-    .attr("class", "handle")
-    // .attr("cy", timeline(commits.reverse()[0]))
-    // .attr("cx", 0)
-    .attr("r", 6);
-
-function moveHandleDrawGraph(commitNum) {
-    handle.attr("cy", timeline(commits.reverse()[commitNum]));
-    drawGraph(repo.timeline[commitNum]);
-}
+// //scale
+// var timeline = d3.scalePoint()
+//     .domain(commits.reverse())
+//     .range([height-2*margin.bottom, 2*margin.top]);
+//
+// // axis
+// var slider = svg
+//     .append("g")
+//     .attr("class", "timeline")
+//     .attr("transform", "translate(50,0)")
+//     .call(d3.axisRight(timeline));
+//
+// // actual slider
+// slider.append("line")
+//     .attr("y1", timeline.range()[0])
+//     .attr("y2", timeline.range()[1])
+//     .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+//         .attr("class", "track-overlay")
+//     .call(d3.drag()
+//         .on("start.interrupt", function() { slider.interrupt(); })
+//         .on("start drag", function(d,i) {
+//             // TRYING TO FIGURE OUT WHICH POSITION ON THE TIMELINE THE USER DRAGGED TO
+//             var yPos = d3.event.y;
+//             console.log("Dragged at " + yPos);
+//             //console.log(imageScale.invert(xPos));
+//             console.log("range 0:" + timeline.range()[0]);
+//             console.log("range 1:" + timeline.range()[1]);
+//             var length = timeline.range()[0]-timeline.range()[1];
+//             var tickSize = length/(commits.length-1);
+//             console.log("length: " + length);
+//             console.log("tick size: " + tickSize);
+//
+//             var tick;
+//             for(tick = 0; yPos > timeline.range[1]+(tick*tickSize); tick++) {
+//                 console.log(timeline.range[1]+tick*tickSize);
+//             }
+//
+//             console.log("tick="+tick);
+//             console.log("Stopped at " + timeline.domain().reverse()[tick]);
+//
+//
+//             var inverseScale = d3.scalePoint()
+//                 .domain(timeline.range)
+//                 .range(timeline.domain);
+//
+//             console.log("INVERSE SCALE: " + inverseScale(d3.event.y));
+//
+//             moveHandleDrawGraph(tick)
+//         })
+//     );
+//
+// // handle
+// var handle = slider
+//     .insert("circle", ".track-overlay")
+//     .attr("class", "handle")
+//     // .attr("cy", timeline(commits.reverse()[0]))
+//     // .attr("cx", 0)
+//     .attr("r", 6);
+//
+// function moveHandleDrawGraph(commitNum) {
+//     handle.attr("cy", timeline(commits.reverse()[commitNum]));
+//     drawGraph(repo.timeline[commitNum]);
+// }
 
 // ==========================================
 // call this draw graph method with an object from the timeline containing the links and nodes
