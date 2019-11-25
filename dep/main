@@ -1,0 +1,3 @@
+from dependency_generator import main
+main()
+
