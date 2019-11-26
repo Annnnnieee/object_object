@@ -26,6 +26,11 @@ This will use the generated output file to create an interactive timeline of you
 ### Cohesion Analysis 
 
 ### The Glue 
+A script that clones a given repo, then:
+* goes in the repo and checks the last 10 commits (can be adjusted for however many)
+* writes another script which has commands to run the cohesion analysis tool on all those commits
+* runs that script
+
 
 ### The Visualization 
 We used a d3 force graph to represent the classes 
