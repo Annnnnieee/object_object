@@ -1,5 +1,5 @@
-# [object object]
-A tool for analyzing code cohesion over time. For Typescript only. 
+# [Cohesion]
+A tool for analyzing code cohesion over time, by [Object Object]. For Typescript only. 
 
 ## Instructions
 
