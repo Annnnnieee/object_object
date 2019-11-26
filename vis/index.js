@@ -10,8 +10,8 @@ svg.attr("class", "graph-svg-component");
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function (d) { return d.id; }))
     .force("charge", d3.forceManyBody()
-    .strength(-40)
-    .distanceMax(20))
+    .strength(-20)
+    .distanceMax(200))
    
     .force("center", d3.forceCenter(width / 2, height / 2));
 
@@ -28,76 +28,7 @@ svg.append("text")
     .text("Cohesion");
 
 
-/*
-change this to load data from a file
-d3.json("output.json", function(error, graph) {
-  if (error) throw error;
-  // graph construction goes here
-}
-the graph variable below is just for testing for now
-*/
-var repo = {
-    timeline: [
-        {
-            commit: "d9aw2a0",
-            datetime: "2015-03-25T14:48:00",
-            nodes: [
-                { "id": "class b", "cohesion": 1 },
-                { "id": "class a", "cohesion": .01 },
-                { "id": "class c", "cohesion": .44 }
-            ],
-            links: [
-                { "source": "class a", "target": "class b" },
-                { "source": "class c", "target": "class b" },
-            ]
-        },
-        {
-            commit: "8waf992",
-            datetime: "2015-03-25T15:14:39",
-            nodes: [
-                { "id": "class b", "cohesion": .80 },
-                { "id": "class a", "cohesion": .01 },
-                { "id": "class c", "cohesion": .32 }
-            ],
-            links: [
-                { "source": "class a", "target": "class b" },
-                { "source": "class c", "target": "class b" },
-            ]
-        },
-        {
-            commit: "2r5sg00",
-            datetime: "2015-03-25T15:14:39",
-            nodes: [
-                { "id": "class b", "cohesion": .50 },
-                { "id": "class a", "cohesion": .10 },
-                { "id": "class c", "cohesion": .57 },
-                { "id": "class d", "cohesion": .99 }
-            ],
-            links: [
-                { "source": "class a", "target": "class b" },
-                { "source": "class c", "target": "class b" },
-                { "source": "class d", "target": "class a" },
-            ]
-        },
-        {
-            commit: "8ah38aa",
-            datetime: "2015-03-27T12:47:55",
-            nodes: [
-                { "id": "class b", "cohesion": .30 },
-                { "id": "class a", "cohesion": .15 },
-                { "id": "class c", "cohesion": .48 },
-                { "id": "class d", "cohesion": .82 }
-            ],
-            links: [
-                { "source": "class a", "target": "class b" },
-                { "source": "class c", "target": "class b" },
-                { "source": "class d", "target": "class a" },
-                { "source": "class d", "target": "class b" }
-            ]
-        }
-
-    ]
-};
+var repo = {"path":"./intern-only-dojo","timeline":[{"commit":"7c851ce","datetime":"2016-08-25T15:01:41.000Z","nodes":[{"id":"CallbackQueue","cohesion":1.5},{"id":"DateObject","cohesion":0.16},{"id":"Evented","cohesion":1},{"id":"Observable","cohesion":0.67},{"id":"Promise","cohesion":0.26},{"id":"Deferred","cohesion":1},{"id":"Registry","cohesion":0.83},{"id":"Scheduler","cohesion":0},{"id":"TestObservable","cohesion":1},{"id":"TestAccessorObservable","cohesion":1},{"id":"MyPromise","cohesion":0.33},{"id":"AssertionError","cohesion":0},{"id":"BrowserStackTunnel","cohesion":0},{"id":"NullTunnel","cohesion":1},{"id":"SauceLabsTunnel","cohesion":0},{"id":"TestingBotTunnel","cohesion":0},{"id":"Tunnel","cohesion":0},{"id":"Evented","cohesion":1},{"id":"CallbackQueue","cohesion":0},{"id":"DateObject","cohesion":0},{"id":"Promise","cohesion":0},{"id":"Deferred","cohesion":0},{"id":"Registry","cohesion":0},{"id":"Scheduler","cohesion":0},{"id":"Observable","cohesion":0},{"id":"ObservableProperty","cohesion":0},{"id":"ObservableArray","cohesion":0},{"id":"Suite","cohesion":0},{"id":"Test","cohesion":0},{"id":"Command","cohesion":0},{"id":"Element","cohesion":0},{"id":"Server","cohesion":0},{"id":"Session","cohesion":0},{"id":"EventEmitter","cohesion":1},{"id":"Agent","cohesion":0},{"id":"Worker","cohesion":0},{"id":"Readable","cohesion":0},{"id":"Writable","cohesion":0},{"id":"Duplex","cohesion":0},{"id":"Transform","cohesion":0},{"id":"PassThrough","cohesion":1},{"id":"AssertionError","cohesion":0},{"id":"Domain","cohesion":1}],"links":[{"source":"TestObservable","target":"Observable"},{"source":"TestAccessorObservable","target":"Observable"},{"source":"MyPromise","target":"Promise"},{"source":"BrowserStackTunnel","target":"Tunnel"},{"source":"NullTunnel","target":"Tunnel"},{"source":"SauceLabsTunnel","target":"Tunnel"},{"source":"TestingBotTunnel","target":"Tunnel"},{"source":"ObservableProperty","target":"Observable"},{"source":"Worker","target":"EventEmitter"},{"source":"Readable","target":"EventEmitter"},{"source":"Writable","target":"EventEmitter"},{"source":"Duplex","target":"Readable"},{"source":"Transform","target":"EventEmitter"},{"source":"PassThrough","target":"Transform"},{"source":"Domain","target":"EventEmitter"}]}]};
 
 var commits = repo.timeline.map(function (coms) { return new Date(coms.datetime).toLocaleString('en-GB', { timeZone: 'UTC' }, { dateStyle: "short" }, { timeSytle: "short" }) }).reverse();
 var maxIdx = commits.length - 1;
@@ -236,7 +167,7 @@ function drawLegend() {
     // legend
     var legendblock = svg.append("g")
         .attr("class", "legend")
-        .attr("transform", "translate(860, 60)");
+        .attr("transform", "translate(1100, 60)");
 
     var legend = legendblock.append("g")
         .append("svg:linearGradient")
@@ -269,7 +200,7 @@ function drawLegend() {
 
     legendblock.append("g")
         .attr("class", "legend-label")
-        .attr("transform", "translate(41,10)")
+        .attr("transform", "translate(40,10)")
         .call(yAxis).append("text")
         .attr("color", "black")
         .attr("transform", "rotate(-90)")
